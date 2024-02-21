@@ -1,0 +1,29 @@
+.box {
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    height: 100px;
+    position: relative;
+    p {
+        font-weight: bold;
+        left: 0px;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        margin: auto;
+        position: absolute;
+        width: fit-content;
+        height: fit-content;
+    }
+}
+
+.headerBar {
+    background-color: green;
+    p {
+        margin-bottom: 0px;
+        color: white;
+        font-weight: bold;
+    }
+
+}
