@@ -1,15 +1,18 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import React from "react";
 import "./page.scss";
-export default function Home() {
+
+function Home() {
+
   const [objects, setObjects] = React.useState<number[][]>([])
   const [matrix, setMatrix] = React.useState<number[][]>([])
   const [showValue, setShowValue] = React.useState<number[][]>([])
+  const [status, setStatus] = React.useState<string>("IDLE")
 
   const mapa = {
-    size: 10, // max 12
+    size: 4, // max 12
   }
-
 
 
   const grabRandomPositionFromArray = (array: any[]) => {
@@ -66,10 +69,57 @@ export default function Home() {
     const newMatrix = [...showValue]
     newMatrix[i][j] = objects[i][j]
     setShowValue(newMatrix)
+    console.log("Click en ", i, j, "valor", objects[i][j])
+  }
+
+  const icognitoTile = (i: number, j: number) => {
+    return (
+      <div className="box" onClick={() => getValueFor(i, j)}>
+        ?
+      </div>
+    )
+  }
+
+  const emptyTile = (i: number, j: number) => {
+    return (
+      <></>
+    )
+  }
+
+  const NumberedTile = (suquito: { i: number, j: number }) => {
+    const { i, j } = suquito;
+    return (
+      <div className="box" onClick={() => getValueFor(i, j)}>
+        {showValue[i][j]}
+        {status == "MATCH" && (
+          <>
+            <Star direction={"LEFT"} />
+            <Star direction={"RIGHT"} />
+          </>
+        )}
+      </div>
+    )
+  }
+
+  const Star = ({ direction = "RIGHT" }: { direction?: string }) => {
+    return (
+      <div className={`Star ${direction}`}>
+        <img src="/star.png" alt="star" width={50} height={50} />
+      </div>
+    )
   }
 
   const getValueToShow = (i: number, j: number) => {
-    return showValue[i][j] || "?"
+    const actualValue = showValue[i][j];
+
+    switch (actualValue) {
+      case 0:
+        return icognitoTile(i, j)
+      case -1:
+        return emptyTile(i, j)
+      default:
+        return <NumberedTile i={i} j={j} />
+    }
   }
 
   React.useEffect(() => {
@@ -78,8 +128,46 @@ export default function Home() {
     setShowValue(createMatrixFromNumber(mapa.size))
 
     putObjectsInMatrix(matrix)
-  },[])
+  }, [])
 
+  React.useEffect(() => {
+    const array = JSON.parse(JSON.stringify(showValue))
+    let status = "IDLE";
+    let oldNumbers = [];
+    let oldpositions = [];
+    for (let i = 0; i < array.length; i++) {
+      for (let j = 0; j < array.length; j++) {
+        const box = array[i][j];
+        if (box > 0) {
+          oldpositions.push({ i, j });
+          oldNumbers.push(box);
+          if (oldNumbers.length === 2) {
+            if (oldNumbers[0] === oldNumbers[1]) {
+              status = "MATCH";
+              oldpositions.forEach((position) => {
+                array[position.i][position.j] = -1;
+              });
+            } else {
+              status = "NO_MATCH";
+              oldpositions.forEach((position) => {
+                array[position.i][position.j] = 0;
+              })
+            }
+            oldNumbers = [];
+          }
+        }
+      }
+    }
+
+    setStatus(status);
+
+    if (status === "NO_MATCH" || status === "MATCH") {
+      setTimeout(() => {
+        setShowValue(array);
+      }, 1500);
+    }
+
+  }, [showValue])
 
   return (
     <div className="container-fluid">
@@ -102,9 +190,7 @@ export default function Home() {
           <div className="row" key={indexRow}>
             {row.map((col, indexCol) => (
               <div className="mt-3 col" key={indexCol}>
-                <div className="box" onClick={() => getValueFor(indexRow,indexCol)}>
-                  {getValueToShow(indexRow,indexCol)}
-                </div>
+                {getValueToShow(indexRow, indexCol)}
               </div>
             ))}
           </div>
@@ -114,3 +200,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home;

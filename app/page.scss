@@ -30,6 +30,54 @@
     }
 }
 
+.Star {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
+    width: fit-content;
+    height: fit-content;
+    &.LEFT {
+        animation: jumpFromInsideLEFT 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+    }
+    &.RIGHT {
+        animation: jumpFromInsideRIGHT 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
+    }
+}
+@keyframes jumpFromInsideRIGHT {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translate(0px, 0px) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translate(-80px, -80px) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) translate(-160px, 80px) rotate(360deg);
+    }
+    
+}
+
+@keyframes jumpFromInsideLEFT {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) translate(0px, 0px) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2) translate(80px, -80px) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1) translate(160px, 80px) rotate(360deg);
+    }
+    
+}
+
 .headerBar {
     background-color: green;
     p {
